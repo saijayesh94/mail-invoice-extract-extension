@@ -1,0 +1,48 @@
+---
+/*
+ * DEV-ONLY page: http://localhost:4321/studio
+ * Injected by the `studio` integration in astro.config.mjs only for `astro dev` — never built or deployed.
+ * tools/demo-video/record.mjs records the landing-page video from this page.
+ */
+import '../styles/global.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import GmailStage from './GmailStage.tsx';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Studio · demo video stage</title>
+    <style is:global>
+      html,
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      /* Keep Astro's dev toolbar out of the recording. */
+      astro-dev-toolbar {
+        display: none !important;
+      }
+      @keyframes studio-pop {
+        from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+        to { opacity: 1; transform: none; }
+      }
+      @keyframes studio-fade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes studio-rise {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <GmailStage client:load />
+  </body>
+</html>

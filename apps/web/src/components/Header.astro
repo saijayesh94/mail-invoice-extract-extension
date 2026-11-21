@@ -1,0 +1,28 @@
+---
+import { Logo } from '@app/ui';
+import { CHECKOUT_HREF, SITE } from '../config/site';
+
+const links = [
+  { href: '/#how', label: 'How it works' },
+  { href: '/#features', label: 'Features' },
+  { href: '/#pricing', label: 'Pricing' },
+  { href: '/#faq', label: 'FAQ' },
+];
+---
+
+<header class="sticky top-0 z-40 border-b border-line/80 bg-white/85 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <a href="/" class="rounded-md focus-visible:outline-2 focus-visible:outline-brand" aria-label={`${SITE.name} home`}>
+      <Logo size={28} />
+    </a>
+    <nav aria-label="Main" class="hidden items-center gap-7 md:flex">
+      {links.map((l) => <a href={l.href} class="text-sm font-medium text-slate-600 transition hover:text-ink">{l.label}</a>)}
+    </nav>
+    <a
+      href={CHECKOUT_HREF}
+      class="inline-flex items-center rounded-lg bg-ink px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+    >
+      Pre-order <span class="ml-1.5 hidden sm:inline">· {SITE.price.display}</span>
+    </a>
+  </div>
+</header>

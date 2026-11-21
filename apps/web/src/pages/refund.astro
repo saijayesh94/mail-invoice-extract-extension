@@ -1,0 +1,49 @@
+---
+import Policy from '../layouts/Policy.astro';
+import { SITE } from '../config/site';
+
+const { name } = SITE;
+const { email } = SITE.business;
+---
+
+<Policy title="Refund Policy" description={`${name} comes with a 100% refund guarantee.`}>
+  <p>
+    <strong>{name} comes with a 100% refund guarantee.</strong> If it isn’t right for you, you get all your money back.
+  </p>
+
+  <h2>Before delivery (pre-order)</h2>
+  <ul>
+    <li>You can cancel your pre-order and get a <strong>full refund at any time</strong> before we deliver your license key.</li>
+    <li>
+      If we haven’t delivered within <strong>{SITE.deliveryDays} days</strong> of your purchase, you can choose a full refund or to keep waiting.
+    </li>
+  </ul>
+
+  <h2>After delivery</h2>
+  <ul>
+    <li>
+      You can ask for a full refund within <strong>{SITE.refundDaysAfterDelivery} days</strong> after we deliver your license key, for any reason.
+      No questions asked.
+    </li>
+    <li>After a refund, your license key is deactivated.</li>
+  </ul>
+
+  <h2>How to ask for a refund</h2>
+  <p>
+    Email <a href={`mailto:${email}`}>{email}</a> from the address you used to buy, with your order ID if you have it. You don’t need to give a reason.
+  </p>
+
+  <h2>How refunds are paid</h2>
+  <p>
+    Refunds go back to your original payment method through Dodo Payments, our merchant of record. We start the refund within 2 business days of your
+    request. Your bank or card provider usually takes 5–10 business days to show it.
+  </p>
+
+  <h2>Chargebacks</h2>
+  <p>
+    Please contact us before raising a dispute with your bank. We will refund faster than a chargeback can be processed.
+  </p>
+
+  <h2>Questions</h2>
+  <p>Email <a href={`mailto:${email}`}>{email}</a>.</p>
+</Policy>

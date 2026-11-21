@@ -1,0 +1,400 @@
+---
+import { FILENAME_PRESETS, getGroupKey, renderFilename } from '@app/core';
+import { ArrowRightIcon, CheckIcon, LockIcon, ShieldIcon } from '@app/ui';
+import Base from '../layouts/Base.astro';
+import { DEMO_INITIAL_REVIEW, DEMO_ITEMS } from '../components/demo/demoData';
+import { CHECKOUT_HREF, CHECKOUT_READY, SITE } from '../config/site';
+
+// Before → after, rendered with the real filename engine from packages/core.
+const defaultTemplate = FILENAME_PRESETS[0]!.template;
+const beforeAfter = DEMO_ITEMS.filter((i) => i.source === 'attachment' && !i.locked && i.id !== 'aws-3')
+  .slice(0, 6)
+  .map((item) => {
+    const group = getGroupKey({ fromAddress: item.fromAddress, fromName: item.fromName, vendorFromDocument: item.vendorFromDocument });
+    const vendor = DEMO_INITIAL_REVIEW.groupLabels[group.key] ?? group.label;
+    return { before: item.originalName, after: renderFilename(defaultTemplate, { ...item.fields, vendor }) };
+  });
+
+const steps = [
+  {
+    n: 1,
+    title: 'Find',
+    body: 'Pick last month, the last 3 months or the financial year. We search for invoices, receipts and bills: PDF attachments and receipts written in the email itself.',
+  },
+  {
+    n: 2,
+    title: 'Review',
+    body: 'Results are grouped by sender. Rename a sender once, skip the ones you don’t need, fix anything highlighted. Your choices are remembered next month.',
+  },
+  {
+    n: 3,
+    title: 'Export',
+    body: 'Download a ZIP of neatly renamed PDFs in month or vendor folders, plus summary.csv your accountant can open in Excel.',
+  },
+];
+
+const features = [
+  {
+    title: 'Grouped by sender',
+    body: 'Five invoices from the same client become one group. Stripe, Razorpay and Paddle receipts are split by the real vendor, not lumped together.',
+  },
+  {
+    title: 'Your file name format',
+    body: 'Mix free text with tags like {date}, {vendor}, {amount}, {invoice_no}. Live preview, ready-made presets, and names that are always safe on Windows and Mac.',
+  },
+  {
+    title: 'summary.csv included',
+    body: 'Date, vendor, amount, currency, GST and invoice number for every file. Opens in Excel or Google Sheets, ready to hand over.',
+  },
+  {
+    title: 'GST-ready',
+    body: 'Reads GSTIN and tax amounts, and understands an April–March financial year as well as January–December.',
+  },
+  {
+    title: 'Duplicates caught',
+    body: 'The same invoice forwarded twice is flagged and left out automatically, so nothing gets counted twice.',
+  },
+  {
+    title: 'Nothing slips through',
+    body: 'Receipts that only live in the email text are saved as PDFs. Password-protected PDFs are flagged “add manually” instead of silently skipped.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Can you see my emails or invoices?',
+    a: `No. ${SITE.name} runs inside your own browser tab. Emails and PDFs are read on your computer and saved straight to your Downloads folder. We don’t have servers that could receive them, and you never sign in with Google or give us your password.`,
+  },
+  {
+    q: 'Why does Chrome say it can “read and change data on mail.google.com”?',
+    a: 'That is Chrome’s standard wording for any extension that works inside Gmail. It’s what lets the extension read your invoices in your own browser. It only does this when you start a scan, and nothing is sent anywhere.',
+  },
+  {
+    q: 'When do I get it?',
+    a: `This is a pre-order. The extension is being built now, and early-bird buyers get beta access by email within ${SITE.deliveryDays} days of purchase. If we miss that, or you change your mind before then, you get a full refund.`,
+  },
+  {
+    q: 'What if it reads an invoice wrong?',
+    a: 'Every invoice layout is different, so nothing is saved until you’ve seen it. Fields we’re unsure about are highlighted in yellow in the review step, and you can fix them in a click.',
+  },
+  {
+    q: 'Does it work with Google Workspace (company) Gmail?',
+    a: 'Yes. It works with any Gmail account you open in Chrome, Edge or Brave on a computer, personal or Workspace.',
+  },
+  {
+    q: 'What about scanned or password-protected PDFs?',
+    a: 'Password-protected PDFs are flagged so you can add them yourself. Scanned image-only PDFs have no text to read yet, so they’re listed with the email date and sender for you to check.',
+  },
+  {
+    q: 'Can it save to Google Drive?',
+    a: 'Drive export is planned for a later update. Version 1 gives you a ZIP download, which needs no Google permissions at all.',
+  },
+  {
+    q: 'How many computers can I use it on?',
+    a: `One license works on up to ${SITE.devicesPerLicense} browsers, for example your laptop, desktop and work machine.`,
+  },
+  {
+    q: 'Is this a subscription?',
+    a: `No. You pay ${SITE.price.display} once. No monthly fee.`,
+  },
+];
+---
+
+<Base
+  title={`${SITE.name}: Gmail invoices, renamed and ready for your accountant`}
+  description={`${SITE.name} finds invoice and receipt PDFs in Gmail, renames them (2026-10-05_Vendor_4500.pdf) and gives you a ZIP + summary spreadsheet. Runs in your browser. One-time ${SITE.price.display}.`}
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(60%_60%_at_50%_0%,#d1fae5_0%,rgba(255,255,255,0)_70%)]"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-20">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand"></span>
+          Early-bird pre-order · {SITE.price.display} one-time
+        </p>
+        <h1 class="mt-5 text-4xl font-bold tracking-tight text-balance text-ink sm:text-5xl md:text-6xl">
+          Your Gmail invoices, renamed and ready for your accountant.
+        </h1>
+        <p class="mx-auto mt-5 max-w-2xl text-lg leading-8 text-pretty text-slate-600">
+          {SITE.name} finds every invoice and receipt in Gmail, reads them in your browser, and hands you a ZIP of neatly
+          named PDFs plus a summary spreadsheet. No subscription. Nothing uploaded.
+        </p>
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a
+            href={CHECKOUT_HREF}
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-brand-dark sm:w-auto"
+          >
+            Pre-order for {SITE.price.display}
+            <ArrowRightIcon size={18} />
+          </a>
+          <a
+            href="#demo"
+            class="inline-flex w-full items-center justify-center rounded-xl border border-line bg-white px-6 py-3.5 text-base font-semibold text-ink transition hover:bg-slate-50 sm:w-auto"
+          >
+            Watch how it works
+          </a>
+        </div>
+        <p class="mt-4 text-sm text-slate-500">
+          One-time payment · Beta access within {SITE.deliveryDays} days · 100% refund guarantee
+        </p>
+        {
+          !CHECKOUT_READY && import.meta.env.DEV && (
+            <p class="mt-2 text-xs font-medium text-amber-700">Dev note: checkout link not set yet (src/config/site.ts)</p>
+          )
+        }
+      </div>
+
+      {/* Demo video: recorded from the dev-only /studio page with `pnpm video` (tools/demo-video). */}
+      <div id="demo" class="mx-auto mt-14 max-w-6xl">
+        <div class="overflow-hidden rounded-2xl border border-line bg-slate-100 shadow-[0_30px_80px_-24px_rgba(15,23,42,0.28)]">
+          <video
+            id="demo-video"
+            class="block aspect-[16/10] w-full"
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+            preload="metadata"
+            poster="/demo/invoice-demo-poster.jpg"
+            aria-label={`${SITE.name} preview: finding invoices in Gmail, reviewing them grouped by sender, and exporting renamed PDFs`}
+          >
+            <source src="/demo/invoice-demo.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <p class="mt-3 text-center text-sm text-slate-500">
+          Product preview with sample data. The extension is in development. Pre-order now for beta access within {SITE.deliveryDays} days.
+        </p>
+      </div>
+      <script>
+        // Respect "reduce motion": don't autoplay the demo video.
+        const video = document.getElementById('demo-video') as HTMLVideoElement | null;
+        if (video && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          video.removeAttribute('autoplay');
+          video.pause();
+        }
+      </script>
+    </div>
+  </section>
+
+  <!-- Before / after -->
+  <section class="border-y border-line bg-slate-50">
+    <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <div class="max-w-2xl">
+        <h2 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl">From “invoice (12).pdf” to files your accountant can use.</h2>
+        <p class="mt-4 text-lg leading-8 text-slate-600">
+          No more downloading attachments one by one and renaming them by hand at month-end, or the night before a GST deadline.
+        </p>
+      </div>
+      <div class="mt-10 grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center">
+        <div class="rounded-2xl border border-line bg-white p-5">
+          <p class="text-xs font-semibold tracking-wide text-slate-400 uppercase">Before</p>
+          <ul class="mt-3 space-y-2">
+            {beforeAfter.map((f) => <li class="truncate font-mono text-[13px] text-slate-500">{f.before}</li>)}
+          </ul>
+        </div>
+        <div class="flex justify-center text-brand" aria-hidden="true">
+          <ArrowRightIcon size={28} class="rotate-90 md:rotate-0" />
+        </div>
+        <div class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
+          <p class="text-xs font-semibold tracking-wide text-brand-dark uppercase">After</p>
+          <ul class="mt-3 space-y-2">
+            {beforeAfter.map((f) => <li class="truncate font-mono text-[13px] font-medium text-ink">{f.after}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class="max-w-2xl">
+      <p class="text-sm font-semibold text-brand-dark">How it works</p>
+      <h2 class="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Three steps, about two minutes.</h2>
+    </div>
+    <ol class="mt-10 grid gap-6 md:grid-cols-3">
+      {
+        steps.map((s) => (
+          <li class="rounded-2xl border border-line p-6">
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">{s.n}</span>
+            <h3 class="mt-4 text-lg font-semibold text-ink">{s.title}</h3>
+            <p class="mt-2 leading-7 text-slate-600">{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="border-t border-line bg-slate-50">
+    <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <div class="max-w-2xl">
+        <p class="text-sm font-semibold text-brand-dark">Features</p>
+        <h2 class="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Built for month-end, quarter-end and tax season.</h2>
+      </div>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          features.map((f) => (
+            <div class="rounded-2xl border border-line bg-white p-6">
+              <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-brand-dark">
+                <CheckIcon size={16} />
+              </span>
+              <h3 class="mt-4 font-semibold text-ink">{f.title}</h3>
+              <p class="mt-2 text-[15px] leading-7 text-slate-600">{f.body}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-8 text-sm text-slate-500">Works in Chrome, Microsoft Edge and Brave on desktop.</p>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="bg-ink text-white">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:items-center">
+      <div>
+        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/15 text-brand">
+          <ShieldIcon size={22} />
+        </span>
+        <h2 class="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">Your invoices never touch our servers. We don’t have any.</h2>
+        <p class="mt-4 text-lg leading-8 text-slate-300">
+          Most receipt tools upload your financial documents to their cloud. {SITE.name} does all the work inside your own browser.
+        </p>
+      </div>
+      <ul class="space-y-4">
+        {
+          [
+            'Emails and PDFs are read on your computer, in your open Gmail tab.',
+            'No Google sign-in, no password, no copy of your inbox on anyone’s server.',
+            'Files go straight to your Downloads folder.',
+            'No tracking or analytics inside the extension.',
+            'The only thing that leaves your browser is your license key, checked with our payment provider.',
+          ].map((point) => (
+            <li class="flex gap-3">
+              <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand text-white">
+                <LockIcon size={12} />
+              </span>
+              <span class="leading-7 text-slate-200">{point}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="text-sm font-semibold text-brand-dark">Pricing</p>
+      <h2 class="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Pay once. Use it every month.</h2>
+      <p class="mt-4 text-lg leading-8 text-slate-600">
+        Typical receipt apps charge {SITE.competitorMonthly} every month, forever. {SITE.name} is a one-time purchase.
+      </p>
+    </div>
+
+    <div class="mx-auto mt-12 grid max-w-4xl gap-6 md:grid-cols-[1.1fr_1fr]">
+      <div class="rounded-3xl border-2 border-brand bg-white p-8 shadow-xl shadow-emerald-500/10">
+        <p class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-brand-dark">Early-bird lifetime license</p>
+        <p class="mt-5 flex items-baseline gap-2">
+          <span class="text-5xl font-bold tracking-tight text-ink">{SITE.price.display}</span>
+          <span class="text-slate-500">one-time</span>
+        </p>
+        <p class="mt-1 text-sm text-slate-500">Early-bird price. It goes up at launch.</p>
+        <ul class="mt-6 space-y-3 text-[15px]">
+          {
+            [
+              'Everything in version 1: find, review, export',
+              'Grouping, custom file names, summary.csv',
+              `Use on up to ${SITE.devicesPerLicense} browsers`,
+              'All future updates included',
+              `Beta access within ${SITE.deliveryDays} days`,
+            ].map((item) => (
+              <li class="flex gap-2.5">
+                <CheckIcon size={18} class="mt-0.5 shrink-0 text-brand" />
+                <span class="text-slate-700">{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <a
+          href={CHECKOUT_HREF}
+          class="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-white transition hover:bg-brand-dark"
+        >
+          Pre-order for {SITE.price.display}
+          <ArrowRightIcon size={18} />
+        </a>
+        <p class="mt-3 text-center text-xs text-slate-500">Secure checkout by Dodo Payments.</p>
+      </div>
+
+      <div class="rounded-3xl border border-line bg-slate-50 p-8">
+        <h3 class="font-semibold text-ink">How the pre-order works</h3>
+        <ol class="mt-5 space-y-5">
+          {
+            [
+              ['Pay once today', `Lock in the ${SITE.price.display} early-bird price.`],
+              ['Get beta access', `We email your license key and install link within ${SITE.deliveryDays} days.`],
+              ['Not happy? Full refund', `Any time before delivery, or within ${SITE.refundDaysAfterDelivery} days after. No questions asked.`],
+            ].map(([title, body], i) => (
+              <li class="flex gap-3">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-brand-dark ring-1 ring-line">
+                  {i + 1}
+                </span>
+                <span>
+                  <span class="block font-medium text-ink">{title}</span>
+                  <span class="mt-0.5 block text-sm leading-6 text-slate-600">{body}</span>
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="mt-6 border-t border-line pt-5 text-sm text-slate-500">
+          Read the full <a href="/refund" class="font-medium text-brand-dark underline underline-offset-2">refund policy</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="border-t border-line bg-slate-50">
+    <div class="mx-auto max-w-3xl px-4 py-20 sm:px-6">
+      <h2 class="text-center text-3xl font-bold tracking-tight text-ink sm:text-4xl">Questions</h2>
+      <div class="mt-10 divide-y divide-line rounded-2xl border border-line bg-white">
+        {
+          faqs.map((f) => (
+            <details class="group px-6 py-5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-ink [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <span class="shrink-0 text-xl leading-none text-slate-400 transition group-open:rotate-45" aria-hidden="true">
+                  +
+                </span>
+              </summary>
+              <p class="mt-3 leading-7 text-slate-600">{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class="rounded-3xl bg-brand-dark px-6 py-14 text-center text-white sm:px-12">
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Make next month-end take two minutes.</h2>
+      <p class="mx-auto mt-4 max-w-xl text-lg text-emerald-50">
+        {SITE.price.display} once. Beta access within {SITE.deliveryDays} days. Full refund if it’s not for you.
+      </p>
+      <a
+        href={CHECKOUT_HREF}
+        class="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-base font-semibold text-brand-dark transition hover:bg-emerald-50"
+      >
+        Pre-order for {SITE.price.display}
+        <ArrowRightIcon size={18} />
+      </a>
+    </div>
+  </section>
+</Base>

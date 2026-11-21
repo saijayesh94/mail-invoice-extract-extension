@@ -1,0 +1,35 @@
+---
+import { BRAND, Logo } from '@app/ui';
+import { SITE } from '../config/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line bg-slate-50">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr]">
+    <div>
+      <Logo size={26} />
+      <p class="mt-3 max-w-xs text-sm leading-6 text-slate-500">{BRAND.shortPitch} Runs entirely in your browser.</p>
+    </div>
+    <div>
+      <p class="text-xs font-semibold tracking-wide text-slate-400 uppercase">Legal</p>
+      <ul class="mt-3 space-y-2 text-sm">
+        <li><a href="/privacy" class="text-slate-600 hover:text-ink">Privacy Policy</a></li>
+        <li><a href="/terms" class="text-slate-600 hover:text-ink">Terms of Service</a></li>
+        <li><a href="/refund" class="text-slate-600 hover:text-ink">Refund Policy</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-xs font-semibold tracking-wide text-slate-400 uppercase">Contact</p>
+      <ul class="mt-3 space-y-2 text-sm">
+        <li><a href={`mailto:${SITE.business.email}`} class="text-slate-600 hover:text-ink">{SITE.business.email}</a></li>
+        <li class="text-slate-500">Payments processed by Dodo Payments</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-line">
+    <p class="mx-auto max-w-6xl px-4 py-5 text-xs text-slate-400 sm:px-6">
+      © {year} {SITE.business.legalName}. {SITE.name} is not affiliated with or endorsed by Google. Gmail is a trademark of Google LLC.
+    </p>
+  </div>
+</footer>
